@@ -132,4 +132,4 @@ class FTXRun():
 
     def has_failed(self)->bool:
         """Check if this FTX run has failed because of another error"""
-        return self.has_started() and not self.is_running() and not self.has_exceeded_the_time_limit() and not self.has_finished()
+        return self.has_started() and not self.is_queueing() and not self.is_running() and not self.has_exceeded_the_time_limit() and not self.has_finished()
