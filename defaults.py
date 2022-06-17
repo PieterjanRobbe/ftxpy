@@ -52,7 +52,7 @@ def get_default_parameters(profile:str="debug")->dict:
     default_parameters["EF_W"]            = FTXParameter("EF_W", "Cutoff energy of W [eV]", 3, lower=2.7, upper=3.3)
     default_parameters["EF_He"]           = FTXParameter("EF_He", "Cutoff energy of He [eV]", 0.1, lower=0.09, upper=1.1)
     default_parameters["E0_He"]           = FTXParameter("E0_He", "Beam energy [eV]", 250, lower=240, upper=300)
-    default_parameters["ALPHA0_He"]       = FTXParameter("ALPHA0_He", "Incident angle [degrees]", 0, lower=-30, upper=30)
+    default_parameters["ALPHA0_He"]       = FTXParameter("ALPHA0_He", "Incident angle [degrees]", 0, lower=0, upper=30)
 
     # Xolotl parameters
     default_parameters["lattice"]         = FTXParameter("lattice", "The length of the lattice side [nm]", 0.317, lower=0.316, upper=0.318)
