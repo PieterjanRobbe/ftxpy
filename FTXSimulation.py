@@ -38,6 +38,8 @@ class FTXSimulation():
         Check if this FTX simulation has been killed because it exceeded the specified time limit
     has_failed()
         Check if this FTX simulation has failed because of another error
+    has_unknown_status()
+        Check if this FTX simulation has unknown status
     save()
         Save this FTX simulation
     load()
@@ -85,6 +87,8 @@ class FTXSimulation():
         src = self.current_run.get_work_dir()
         self._name = "restart_" + self._basename + f"_{len(self._runs)}"
         dest = os.path.join(self._path, self._name)
+        if os.path.exists(dest):
+            shutil.rmtree(dest)
         shutil.copytree(src, dest)
         self.current_run = FTXRun(dest, self.current_run.inputs, self.current_run.batchscript)
         self._prepare_restart()
@@ -123,27 +127,28 @@ class FTXSimulation():
         parameters = dict()
         log_ftx = self.current_run.get_log_file()
         line_nb = get_last_occurance(log_ftx, "check for updates in time steps")
-        parameters["LOOP_N"] = int(log_ftx[line_nb].split()[2][:-1])
-        if "no update" in log_ftx[line_nb + 1]:
-            parameters["LOOP_TIME_STEP"] = float(log_ftx[line_nb + 1].split("(")[1].split(")")[0])
-            parameters["start_stop"] = float(log_ftx[line_nb + 1].split("(")[2].split(")")[0])
-        else:
-            parameters["LOOP_TIME_STEP"] = float(log_ftx[line_nb + 3].split()[6])
-            parameters["start_stop"] = float(log_ftx[line_nb + 3].split()[9][1:])
-        line_nb = get_last_occurance(log_ftx, "change in Xolotls")
-        parameters["ts_adapt_dt_max"] = float(log_ftx[line_nb + 1].split()[-1])
-        line_nb = get_last_occurance(log_ftx, "driver time (in loop)")
-        parameters["INIT_TIME"] = float(log_ftx[line_nb].split()[-1])
-        parameters["XOLOTL_MAX_TS"] = self.current_run.inputs.parameters["XOLOTL_MAX_TS"].get_value() if parameters["INIT_TIME"] < 5 else 0.1
-        line_nb = get_last_occurance(log_ftx, "updated the values of voidPortion")
-        if line_nb > -1:
-            parameters["voidPortion"] = float(log_ftx[line_nb].split()[-1])
-            parameters["grid_size"] = float(log_ftx[line_nb].split()[-1])
+        if line_nb > -1:    
+            parameters["LOOP_N"] = int(log_ftx[line_nb].split()[2][:-1])
+            if "no update" in log_ftx[line_nb + 1]:
+                parameters["LOOP_TIME_STEP"] = float(log_ftx[line_nb + 1].split("(")[1].split(")")[0])
+                parameters["start_stop"] = float(log_ftx[line_nb + 1].split("(")[2].split(")")[0])
+            else:
+                parameters["LOOP_TIME_STEP"] = float(log_ftx[line_nb + 3].split()[6])
+                parameters["start_stop"] = float(log_ftx[line_nb + 3].split()[9][1:])
+            line_nb = get_last_occurance(log_ftx, "change in Xolotls")
+            parameters["ts_adapt_dt_max"] = float(log_ftx[line_nb + 1].split()[-1])
+            line_nb = get_last_occurance(log_ftx, "driver time (in loop)")
+            parameters["INIT_TIME"] = float(log_ftx[line_nb].split()[-1])
+            parameters["XOLOTL_MAX_TS"] = self.current_run.inputs.parameters["XOLOTL_MAX_TS"].get_value() if parameters["INIT_TIME"] < 5 else 0.1
+            line_nb = get_last_occurance(log_ftx, "updated the values of voidPortion")
+            if line_nb > -1:
+                parameters["voidPortion"] = float(log_ftx[line_nb].split()[-1])
+                parameters["grid_size"] = float(log_ftx[line_nb].split()[-1])
         return parameters
 
     def has_started(self)->bool:
         """Check if this FTX simulation has started"""
-        return self.current_run.has_started()
+        return len(self._runs) > 0 and self._runs[0].has_started()
 
     def is_running(self)->bool:
         """Check if this FTX simulation is currently running"""
@@ -164,6 +169,10 @@ class FTXSimulation():
     def has_failed(self)->bool:
         """Check if this FTX simulation has failed because of another error"""
         return self.current_run.has_failed()
+
+    def has_unknown_status(self)->bool:
+        """Check if this FTX simulation has unknown status"""
+        return self.has_started() and not self.is_queueing() and not self.is_running() and not self.has_exceeded_the_time_limit() and not self.has_finished()
 
     def save(self, overwrite:bool=False)->None:
         """Save this FTX simulation"""
