@@ -4,9 +4,6 @@ import pyslurm
 import shlex
 import subprocess
 
-# special imports
-from pyFTX.defaults import get_default_slurm_settings, get_default_ftx_commands
-
 # class that represents a batchscript
 class Batchscript():
     """
@@ -18,20 +15,17 @@ class Batchscript():
         Submit this batchscript to the slurm scheduler
     """
 
-    def __init__(self, name="batchscript.srun", slurm_settings=get_default_slurm_settings(profile="debug"), commands=get_default_ftx_commands()):
+    def __init__(self, slurm_settings:dict, commands:list):
         """
         Constructs all the necessary attributes for the Batchscript object
 
         Parameters
         ----------
-            name : str
-                The name of this batchscript
-            slurm_settings : dict (keyword argument)
+            slurm_settings : dict
                 An optional dict of slurm settings
-            commands : list (keyword argument)
-                An optional list of commands to run
+            commands : list
+                An optional list of commands to ru
         """
-        self.name = name
         self.slurm_settings = slurm_settings
         self.commands = commands
 

@@ -19,7 +19,7 @@ class FTXParameter():
         Sets the value of this parameter to a random value sampled according to a uniform law between the lower and upper bound
     """
 
-    def __init__(self, name, description, nominal, lower=None, upper=None, log10_transform=False):
+    def __init__(self, name, description=None, value=None, lower=None, upper=None, log10_transform=False):
         """
         Constructs all the necessary attributes for the FTXParameter object
 
@@ -29,7 +29,7 @@ class FTXParameter():
                 The name of the parameter
             description : str
                 A description of the parameter
-            nominal : float
+            value : float
                 The nominal value of the parameter
             lower : float (keyword argument)
                 The lower bound of this parameter
@@ -40,12 +40,12 @@ class FTXParameter():
         """
         self.name = name
         self.description = description
-        self.nominal = nominal
+        self.nominal = value
         self.value = self.nominal
-        self.lower = lower if not lower is None else nominal
-        self.upper = upper if not upper is None else nominal
+        self.lower = lower if not lower is None else value
+        self.upper = upper if not upper is None else value
         self.log10_transform = log10_transform
-        self.check_bounds(nominal)
+        self.check_bounds(value)
 
     def check_bounds(self, value:float)->None:
         """Checks if the given parameter falls between the lower and upper bound"""

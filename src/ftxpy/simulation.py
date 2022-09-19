@@ -1,16 +1,15 @@
 # import statements
-from codecs import ignore_errors
-import h5py
+import copy
 import os
 import shutil
 import sys
 
 # special imports
-from pyFTX.FTXRun import FTXRun
-from pyFTX.utils import save, load, get_last_occurance
+from .run import FTXRun
+from .utils import save, load, get_last_occurance
 
 # add path to keepLastTS.py
-sys.path.append("/project/projectdirs/atom/users/" + os.environ.get("USER") + "/ips-wrappers/ips-iterative-xolotlFT/python_scripts_for_coupling")
+sys.path.append(os.environ.get("CFS") + "/atom/users/" + os.environ.get("USER") + "/ips-wrappers/ips-iterative-xolotlFT/ips_xolotlFT/python_scripts_for_coupling")
 import keepLastTS
 
 # class that represents an FTX simulation
@@ -22,6 +21,8 @@ class FTXSimulation():
     -------
     get_runs()
         Returns a list of FTX runs that compose this simulation
+    get_path()
+        Returns the path of this simulation
     start()
         Start this FTX simulation
     restart()
@@ -42,6 +43,10 @@ class FTXSimulation():
         Check if this FTX simulation has unknown status
     save()
         Save this FTX simulation
+    delete_all_runs()
+        Delete all runs of this FTX simulation
+    delete_last_run()
+        Delete the last run of this FTX simulation
     load()
         Load an FTX simulation from file
     status()
@@ -65,16 +70,21 @@ class FTXSimulation():
         self._runs = list()
         self._path = self.current_run.get_work_dir()
         self._name = os.path.split(self._path)[-1]
-        self._basename = self._name
 
     def get_runs(self):
         """Returns a list of FTX runs that compose this simulation"""
         return self._runs
 
+    def get_path(self):
+        """Returns the path of this simulation"""
+        return self._path
+
     def start(self)->None:
         """Start this FTX simulation"""
-        self._name = "init_" + self._basename
-        self.current_run.change_work_dir(os.path.join(self._path, self._name))
+        if self.has_started():
+            print(f"Simulation has already started, use 'restart' instead")
+            raise ValueError("FTXPy -> FTXSimulation -> start() : Simulation has already started, use 'restart' instead")
+        self.current_run.change_work_dir(os.path.join(self._path, "init_" + self._name))
         self.current_run.write_files()
         self._start_current_run()
 
@@ -85,12 +95,11 @@ class FTXSimulation():
     def restart(self)->None:
         """Restart this FTX simulation"""
         src = self.current_run.get_work_dir()
-        self._name = "restart_" + self._basename + f"_{len(self._runs)}"
-        dest = os.path.join(self._path, self._name)
+        dest = os.path.join(self._path, "restart_" + self._name + f"_{len(self._runs)}")
         if os.path.exists(dest):
             shutil.rmtree(dest)
         shutil.copytree(src, dest)
-        self.current_run = FTXRun(dest, self.current_run.inputs, self.current_run.batchscript)
+        self.current_run = FTXRun(dest, copy.deepcopy(self.current_run.inputs), copy.deepcopy(self.current_run.batchscript))
         self._prepare_restart()
         self.current_run.write_files(overwrite=True)
         self.current_run.clean()
@@ -143,7 +152,9 @@ class FTXSimulation():
             line_nb = get_last_occurance(log_ftx, "updated the values of voidPortion")
             if line_nb > -1:
                 parameters["voidPortion"] = float(log_ftx[line_nb].split()[-1])
-                parameters["grid_size"] = float(log_ftx[line_nb].split()[-1])
+            line_nb = get_last_occurance(log_ftx, "updated the values of grid")
+            if line_nb > -1:
+                parameters["grid_size"] = int(log_ftx[line_nb].split()[-1])
         return parameters
 
     def has_started(self)->bool:
@@ -184,6 +195,25 @@ class FTXSimulation():
             raise ValueError("FTXPy -> FTXSimulation -> save() : File already exists, use 'overwrite=True' to overwrite the simulation file")
         save(self, file_name)
 
+    def delete_all_runs(self):
+        """Delete all runs of this FTX simulation"""
+        for run in self._runs:
+            shutil.rmtree(run.get_work_dir()) # remove directory
+        if len(self._runs) > 0:
+            self.current_run = self._runs[0]
+        self._runs = list()
+        self.current_run._job_id = None # required, assume this run hasn't been started
+
+    def delete_last_run(self):
+        """Delete the last run of this FTX simulation"""
+        if len(self._runs) > 0:
+            shutil.rmtree(self.current_run.get_work_dir()) # remove directory
+        if len(self._runs) == 1: # if only init run, then assume this run hasn't been started
+            self.current_run._job_id = None
+        if len(self._runs) > 1: # else, go back to previous run
+            self.current_run = self._runs[-2]
+        self._runs = self._runs[:-1] # remove last run from list
+        
     def load(file_name:str):
         """Load an FTX simulation from file"""
         if not os.path.isfile(file_name):
@@ -210,11 +240,11 @@ class FTXSimulation():
         return self._get_print_name() + " " + status
 
     def _get_print_name(self):
-        if self._name.startswith("init_"):
-            return self._basename + " (init)"
-        elif self._name.startswith("restart_"):
-            return self._basename + " (restart " + self._name.split("_")[-1] + ")"
-        return self._basename
+        if len(self._runs) == 1:
+            return self._name + " (init)"
+        elif len(self._runs) > 1:
+            return self._name + f" (restart {len(self._runs) - 1})"
+        return self._name
 
     def print_status(self):
         """Prints the status of this FTX simulation"""

@@ -4,9 +4,9 @@ import shlex
 import subprocess
 
 # special imports
-from pyFTX.Batchscript import Batchscript
-from pyFTX.FTXInput import FTXInput
-from pyFTX.utils import working_directory, occursin_file
+from .batchscript import Batchscript
+from .input import FTXInput
+from .utils import working_directory, occursin_file
 
 # class that represents an FTX run
 class FTXRun():
@@ -120,7 +120,7 @@ class FTXRun():
             log_ftx_file = "log.ftx"
             if not os.path.isfile(log_ftx_file):
                 return False
-            return occursin_file("xolotl-ftridyn_driver: finalize", log_ftx_file)
+            return occursin_file("FT-X driver:finalize called", log_ftx_file)
 
     def has_exceeded_the_time_limit(self)->bool:
         """Check if this FTX run has been killed because it exceeded the specified time limit"""
