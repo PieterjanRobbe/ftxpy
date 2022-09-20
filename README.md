@@ -1,4 +1,4 @@
-# FTXpy
+# ftxpy
 
 A Python wrapper for coupled F-Tridyn/Xolotl simulation using the Integrated Plasma Simulator (IPS) framework.
 
