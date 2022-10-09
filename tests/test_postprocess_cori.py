@@ -3,7 +3,7 @@ import os
 import shutil
 
 # get the PISCES simulation
-work_dir = os.path.join(os.environ["CSCRATCH"], "ftxpy_test_PISCES")
+work_dir = os.path.join(os.environ["CSCRATCH"], "ftxpy", "test_postprocess")
 simulation = ftxpy.FTXSimulation.load(os.path.join(work_dir, "simulation.pk"))
 
 # create FTX output

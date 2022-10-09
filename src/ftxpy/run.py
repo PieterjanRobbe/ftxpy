@@ -6,6 +6,7 @@ import subprocess
 # special imports
 from .batchscript import Batchscript
 from .input import FTXInput
+from .parameter import FTXParameter
 from .utils import working_directory, occursin_file
 
 # class that represents an FTX run
@@ -56,6 +57,7 @@ class FTXRun():
         self.inputs = inputs
         self.batchscript = batchscript
         self._job_id = None
+        self.change_work_dir(self.work_dir) # also update SIM_ROOT in IPS config file!
 
     def get_work_dir(self)->str:
         """Returns the work dir of this FTX run"""
@@ -64,6 +66,7 @@ class FTXRun():
     def change_work_dir(self, work_dir:str)->None:
         """Change the work directory for this FTX run to the given work directory"""
         self.work_dir = work_dir
+        self.inputs.parameters["SIM_ROOT"] = FTXParameter(name="SIM_ROOT", value=work_dir)
 
     def write_files(self, overwrite:bool=False)->None:
         """Write the files for this FTX run"""

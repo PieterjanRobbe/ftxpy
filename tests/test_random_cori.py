@@ -20,7 +20,7 @@ commands = config["batchscript"]["commands"]
 batchscript = ftxpy.Batchscript(slurm_settings=slurm_settings, commands=commands)
 
 # set up a work directory
-work_dir = os.path.join(os.environ["CSCRATCH"], "ftxpy_test_random")
+work_dir = os.path.join(os.environ["CSCRATCH"], "ftxpy", "test_random")
 shutil.rmtree(work_dir, ignore_errors=True)
 os.makedirs(work_dir)
 

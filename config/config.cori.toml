@@ -154,7 +154,7 @@ log10_transform = "true"
 
 [input.parameters.voidPortion]
 description = "The fraction of the computational domain that is void"
-value = 47.81
+value = 0
 
 [input.parameters.burstingFactor]
 description = "Multiplication constant for the bursting rate [-]"
@@ -216,6 +216,17 @@ description = "Migration energy threshold (above which the diffusion will be ign
 value = 1.3
 lower = 1.1
 upper = 1.5
+
+#
+# Simulation management parameters
+#
+[input.parameters.SIM_NAME]
+description = "The name of this simulation"
+value = "ftx_Sim"
+
+[input.parameters.SIM_ROOT]
+description = "The root directory for this simulation"
+value = "$PWD"
 
 #
 # Case-dependent parameters
@@ -336,7 +347,7 @@ time_limit = 2880
 [batchscript]
 commands = [
     "conda activate ftx",
-    "module load PrgEnv-intel/6.0.5 intel/19.0.3.199",
+    "module load PrgEnv-intel intel",
     "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/gcc/11.2.0/snos/lib64",
     "export OMP_PLACES=threads",
     "export OMP_PROC_BIND=spread",

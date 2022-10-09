@@ -1,5 +1,6 @@
 # import statements
 import copy
+import glob
 import os
 import shutil
 import sys
@@ -112,7 +113,7 @@ class FTXSimulation():
 
     def _keep_last_ts(self)->None:
         work_dir = self.current_run.work_dir
-        src = os.path.join(work_dir, "work", "workers__xolotlWorker_3", "xolotlStop.h5")
+        src = glob.glob(os.path.join(work_dir, "work", "workers__xolotlWorker_*", "xolotlStop.h5"))[0]
         dest = os.path.join(work_dir, "networkFile.h5")
         if os.path.isfile(dest):
             os.remove(dest)
@@ -120,7 +121,7 @@ class FTXSimulation():
 
     def _copy_last_tridyn(self)->None:
         work_dir = self.current_run.work_dir
-        src = os.path.join(work_dir, "work", "workers__ftridynWorker_2", "last_TRIDYN.dat")
+        src = glob.glob(os.path.join(work_dir, "work", "workers__ftridynWorker_*", "last_TRIDYN.dat"))[0]
         dest = os.path.join(work_dir, "last_TRIDYN.dat")
         shutil.copyfile(src, dest)
 

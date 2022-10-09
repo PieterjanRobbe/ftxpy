@@ -1,4 +1,5 @@
 # import statements
+import glob
 import matplotlib.pyplot as plt
 import numpy as np
 import os
@@ -17,27 +18,29 @@ class FTXOutput():
         self.content = None
 
     def load_surface(self):
-        surface_files = [os.path.join(run.get_work_dir(), "work", "workers__xolotlWorker_3", "surface.txt") for run in self.ftx_simulation.get_runs()]
+        runs = self.ftx_simulation.get_runs()
+        surface_files = [file for file_list in [glob.glob(os.path.join(run.get_work_dir(), "work", "workers__xolotlWorker_*", "surface.txt")) for run in runs] for file in file_list]
         surfaces = [np.loadtxt(surface_file).reshape(-1, 2) for surface_file in surface_files if os.path.isfile(surface_file) and os.path.getsize(surface_file)]
-        allSurface_files = [os.path.join(run.get_work_dir(), "work", "workers__xolotlWorker_3", "allSurface.txt") for run in self.ftx_simulation.get_runs()]
+        allSurface_files = [file for file_list in [glob.glob(os.path.join(run.get_work_dir(), "work", "workers__xolotlWorker_*", "allSurface.txt")) for run in runs] for file in file_list]
         allSurfaces = [np.loadtxt(allSurface_file) for allSurface_file in allSurface_files if os.path.isfile(allSurface_file) and os.path.getsize(allSurface_file)]
         surface = np.unique(np.vstack(surfaces + allSurfaces), axis=0)
         surface[:, 1] = surface[0, 1] - surface[:, 1] # subtract baseline
         self.surface = (surface[:, 0], surface[:, 1])
 
     def load_retention(self):
-        retentionOut_files = [os.path.join(run.get_work_dir(), "work", "workers__xolotlWorker_3", "retentionOut.txt") for run in self.ftx_simulation.get_runs()]
+        runs = self.ftx_simulation.get_runs()
+        retentionOut_files = [file for file_list in [glob.glob(os.path.join(run.get_work_dir(), "work", "workers__xolotlWorker_*", "retentionOut.txt")) for run in runs] for file in file_list]
         retentionOuts = [np.loadtxt(retentionOut_file) for retentionOut_file in retentionOut_files if os.path.isfile(retentionOut_file) and os.path.getsize(retentionOut_file)]
-        allRetentionOut_files = [os.path.join(run.get_work_dir(), "work", "workers__xolotlWorker_3", "allRetentionOut.txt") for run in self.ftx_simulation.get_runs()]
+        allRetentionOut_files = [file for file_list in [glob.glob(os.path.join(run.get_work_dir(), "work", "workers__xolotlWorker_*", "allRetentionOut.txt")) for run in runs] for file in file_list]
         allRetentionOuts = [np.loadtxt(allRetentionOut_file) for allRetentionOut_file in allRetentionOut_files if os.path.isfile(allRetentionOut_file) and os.path.getsize(allRetentionOut_file)]
-        # retention = np.vstack([np.vstack([x, y]) for x, y in zip(allRetentionOuts, retentionOuts)])
         retention = np.unique(np.vstack(retentionOuts + allRetentionOuts), axis=0)
         self.retention = (retention[1:, 0], 100*(retention[1:, 2] + retention[1:, 5]) / (retention[1:, 1] * self.get_sticking_coeff())) # 100*(He content + He bulk ) / (fluence * He sticking coeff)
 
     def load_content(self):
-        retentionOut_files = [os.path.join(run.get_work_dir(), "work", "workers__xolotlWorker_3", "retentionOut.txt") for run in self.ftx_simulation.get_runs()]
+        runs = self.ftx_simulation.get_runs()
+        retentionOut_files = [file for file_list in [glob.glob(os.path.join(run.get_work_dir(), "work", "workers__xolotlWorker_*", "retentionOut.txt")) for run in runs] for file in file_list]
         retentionOuts = [np.loadtxt(retentionOut_file) for retentionOut_file in retentionOut_files if os.path.isfile(retentionOut_file) and os.path.getsize(retentionOut_file)]
-        allRetentionOut_files = [os.path.join(run.get_work_dir(), "work", "workers__xolotlWorker_3", "allRetentionOut.txt") for run in self.ftx_simulation.get_runs()]
+        allRetentionOut_files = [file for file_list in [glob.glob(os.path.join(run.get_work_dir(), "work", "workers__xolotlWorker_*", "allRetentionOut.txt")) for run in runs] for file in file_list]
         allRetentionOuts = [np.loadtxt(allRetentionOut_file) for allRetentionOut_file in allRetentionOut_files if os.path.isfile(allRetentionOut_file) and os.path.getsize(allRetentionOut_file)]
         retention = np.unique(np.vstack(retentionOuts + allRetentionOuts), axis=0)
         self.content = (retention[1:, 0], retention[1:, 2])
@@ -65,7 +68,7 @@ class FTXOutput():
 
     def get_sticking_coeff(self):
         runs = self.ftx_simulation.get_runs()
-        tridyn_dat_files = [os.path.join(run.get_work_dir(), "work", "workers__xolotlWorker_3", "tridyn.dat") for run in runs]
+        tridyn_dat_files = [file for file_list in [glob.glob(os.path.join(run.get_work_dir(), "work", "workers__xolotlWorker_*", "tridyn.dat")) for run in runs] for file in file_list]
         tridyn_exists = [os.path.isfile(tridyn_dat_file) for tridyn_dat_file in tridyn_dat_files]
         tridyn_ics = [i for i, tridyn_exist in enumerate(tridyn_exists) if tridyn_exist]
         if len(tridyn_ics) == 0:

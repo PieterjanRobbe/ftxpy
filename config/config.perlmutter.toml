@@ -218,6 +218,17 @@ lower = 1.1
 upper = 1.5
 
 #
+# Simulation management parameters
+#
+[input.parameters.SIM_NAME]
+description = "The name of this simulation"
+value = "ftx_Sim"
+
+[input.parameters.SIM_ROOT]
+description = "The root directory for this simulation"
+value = "$PWD"
+
+#
 # Case-dependent parameters
 #
 
