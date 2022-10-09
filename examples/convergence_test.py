@@ -93,12 +93,14 @@ def step():
                 simulation = ftxpy.FTXSimulation.load(simulation_file)
                 simulation.step()
                 simulations[network_size, seed] = simulation
+                n = len(simulation._runs) - 1
             else:
                 print(f"Simulation file '{simulation_file}' not found!")
 
     # actually run the jobs
     config = ftxpy.utils.parse(ftxpy._ftxpy_config_cori_, case="PISCES", profile=profile())
     slurm_settings = config["batchscript"]["slurm_settings"]
+    slurm_settings["output"] = f"log.slurm.stdOut.{n}"
     nb_not_finished = sum([not simulation.has_finished() for simulation in simulations.values()])
     if nb_not_finished > 0:
         slurm_settings["min_nodes"] = 2*nb_not_finished
@@ -108,7 +110,7 @@ def step():
             for seed in seeds():
                 if not simulations[network_size, seed].has_finished():
                     configs.append(f"{simulations[network_size, seed].current_run.work_dir}/ips.ftx.config")
-        ips_command = "ips.py --config=" + ",".join(configs) + " --platform=$CFS/atom/users/pieterja/ips-examples/iterative-xolotlFT-UQ/conf.ips.cori --log=log.framework 2>>log.stdErr 1>>log.stdOut"
+        ips_command = "ips.py --config=" + ",".join(configs) + f" --platform=$CFS/atom/users/pieterja/ips-examples/iterative-xolotlFT-UQ/conf.ips.cori --log=log.framework.{n} 2>>log.stdErr.{n} 1>>log.stdOut.{n}"
         commands.append(ips_command)
         batchscript = ftxpy.Batchscript(slurm_settings=slurm_settings, commands=commands)
         with ftxpy.working_directory(get_root_dir()):
