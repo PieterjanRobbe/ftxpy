@@ -86,6 +86,7 @@ def define():
 def step():
     # run as usual with dummy batchscript
     simulations = {}
+    n = 0
     for network_size in network_sizes():
         for seed in seeds():
             simulation_file = os.path.join(get_work_dir(network_size, seed), "simulation.pk")
@@ -93,7 +94,7 @@ def step():
                 simulation = ftxpy.FTXSimulation.load(simulation_file)
                 simulation.step()
                 simulations[network_size, seed] = simulation
-                n = len(simulation._runs) - 1
+                n = max(n, len(simulation._runs) - 1)
             else:
                 print(f"Simulation file '{simulation_file}' not found!")
 
