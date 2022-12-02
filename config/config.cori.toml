@@ -83,7 +83,7 @@ value = "8 0 0 250 6 false"
 
 [input.parameters.grouping]
 description = "Parameters related to the grouping (grouping = groupHeV groupHe groupV; grouping ON: groupHeV < MaxVSize)"
-value = "31 4 1"
+value = "31 4 4"
 
 [input.parameters.nImpacts]
 description = "The number of particles to use"
@@ -154,7 +154,7 @@ log10_transform = "true"
 
 [input.parameters.voidPortion]
 description = "The fraction of the computational domain that is void"
-value = 0
+value = 0.0
 
 [input.parameters.burstingFactor]
 description = "Multiplication constant for the bursting rate [-]"
@@ -222,7 +222,7 @@ upper = 1.5
 #
 [input.parameters.SIM_NAME]
 description = "The name of this simulation"
-value = "ftx_Sim"
+value = "FTX UQ simulation"
 
 [input.parameters.SIM_ROOT]
 description = "The root directory for this simulation"
@@ -234,19 +234,19 @@ value = "$PWD"
 
 [input.parameters.inputEnergy_He]
 description = "Flag to determine if the input energies for He are read from a distribution file (< 0) of if the given values are used (>= 0)"
-value = 0.0
+value = "{E0_He}"
 
 [input.parameters.inputEnergy_W]
 description = "Flag to determine if the input energies for W are read from a distribution file (< 0) of if the given values are used (>= 0)"
-value = 0.0
+value = -1.0
 
 [input.parameters.inputAngle_He]
 description = "Flag to determine if the input angles for He are read from a distribution file (< 0) of if the given values are used (>= 0)"
-value = 0.0
+value = "{ALPHA0_He}"
 
 [input.parameters.inputAngle_W]
 description = "Flag to determine if the input angles for W are read from a distribution file (< 0) of if the given values are used (>= 0)"
-value = 0.0
+value = -1.0
 
 [input.parameters.tempParam]
 description = "Parameter in the constanst temperature model"
@@ -257,16 +257,16 @@ description = "Value of the flux in gitrOut.txt"
 value = 5.4e22
 
 [input.parameters.fluxFraction_He]
-description = "Value fo the flux fraction of He in gitrOut.txt"
+description = "Value of the flux fraction of He in gitrOut.txt"
 value = 1.0
 
 [input.parameters.fluxFraction_W]
-description = "Value fo the flux fraction of W in gitrOut.txt"
+description = "Value of the flux fraction of W in gitrOut.txt"
 value = 0.00293159784018
 
 [input.parameters.GITRoutput_dir]
-description = "Location of the GITR output directory relative to ${CFS}/atom/users/${USER}/ips-examples/iterative-xolotlFT/"
-value = "GITRoutput/PISCES"
+description = "Location of the GITR output directory"
+value = "{SIM_ROOT}/GITRoutput/PISCES"
 
 #
 # Parallel processing parameters
@@ -288,16 +288,6 @@ value = 128
 #
 
 [input.cases.PISCES.parameters]
-gridParam=256
-inputEnergy_He = 0.0
-inputEnergy_W = 0.0
-inputAngle_He = 0.0
-inputAngle_W = 0.0
-tempParam = 1093.0
-flux = 5.4e22
-fluxFraction_He = 0.00293159784018
-fluxFraction_W = 0.00293159784018
-GITRoutput_dir = "GITRoutput/PISCES"
 
 [input.cases.ITER-He.parameters]
 gridParam=367
@@ -366,11 +356,10 @@ commands = [
 #
 
 [profiles.debug.input.parameters]
-END_TIME = 5e-4
-LOOP_TIME_STEP = 2.5e-4
-start_stop = 2.5e-5
-grouping="11 2 2"
-netParam="8 0 0 100 6 false"
+END_TIME = 2e-4
+LOOP_TIME_STEP = 1e-4
+start_stop = 1e-5
+netParam="8 0 0 50 6 false"
 
 [profiles.debug.batchscript.slurm_settings]
 partition = "debug"
