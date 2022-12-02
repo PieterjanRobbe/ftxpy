@@ -31,16 +31,10 @@ def get_work_dir(network_size, seed):
     return os.path.join(get_root_dir(), get_name(network_size, seed))
 
 # ===================================================================
-class DummyBatchScript():
-
-    def __init__(self, slurm_settings):
-        self.slurm_settings = slurm_settings
-
-    def submit(self):
-        pass
-
-# ===================================================================
 def define():
+
+    # list of simulations
+    simulations = list()
 
     for network_size in network_sizes():
         for seed in seeds():
@@ -57,16 +51,17 @@ def define():
             # update parameters
             parameters["SIM_NAME"].set_value(get_name(network_size, seed))
             parameters["netParam"].set_value(f"8 0 0 {network_size} 6 false")
-            for param_name in ["SBV_W", "EF_W", "EF_He", "E0_He", "ALPHA0_He", "lattice", "impurityRadius", "biasFactor", "initialV", "voidPortion", "He1", "He2", "He3", "He4", "He5", "He6", "He7", "V1"]:
+            for param_name in ["SBV_W", "EF_W", "EF_He", "E0_He", "ALPHA0_He", "lattice", "impurityRadius", "biasFactor", "initialV", "He1", "He2", "He3", "He4", "He5", "He6", "He7", "V1"]:
                 parameters[param_name].set_random_value()
-
+        
             # define inputs
             source = os.path.expandvars(config["input"]["source"])
             inputs = ftxpy.FTXInput(parameters=parameters, source=source)
 
             # define batchscript
             slurm_settings = config["batchscript"]["slurm_settings"]
-            batchscript = DummyBatchScript(slurm_settings)
+            commands = config["batchscript"]["commands"]
+            batchscript = ftxpy.Batchscript(slurm_settings=slurm_settings, commands=commands)
 
             # set up a work directory
             work_dir = get_work_dir(network_size, seed)
@@ -78,66 +73,40 @@ def define():
 
             # set up an ftx simulation
             simulation = ftxpy.FTXSimulation(run)
+            simulations.append(simulation)
 
-            # save simulation
-            simulation.save(overwrite=True)
+    # create a simulation group
+    group = ftxpy.FTXGroup(get_root_dir(), simulations)
+
+    # save the simulation group
+    group.save(overwrite=True)
+
+# ===================================================================
+def start():
+    group = ftxpy.FTXGroup.load(os.path.join(get_root_dir(), "simulation_group.pk"))
+    group.start()
+    group.save(overwrite=True)
 
 # ===================================================================
 def step():
-    # run as usual with dummy batchscript
-    simulations = {}
-    n = 0
-    for network_size in network_sizes():
-        for seed in seeds():
-            simulation_file = os.path.join(get_work_dir(network_size, seed), "simulation.pk")
-            if os.path.isfile(simulation_file):
-                simulation = ftxpy.FTXSimulation.load(simulation_file)
-                simulation.step()
-                simulations[network_size, seed] = simulation
-                n = max(n, len(simulation._runs) - 1)
-            else:
-                print(f"Simulation file '{simulation_file}' not found!")
-
-    # actually run the jobs
-    config = ftxpy.utils.parse(ftxpy._ftxpy_config_cori_, case="PISCES", profile=profile())
-    slurm_settings = config["batchscript"]["slurm_settings"]
-    slurm_settings["output"] = f"log.slurm.stdOut.{n}"
-    nb_not_finished = sum([not simulation.has_finished() for simulation in simulations.values()])
-    if nb_not_finished > 0:
-        slurm_settings["min_nodes"] = 2*nb_not_finished
-        commands = config["batchscript"]["commands"][:-1]
-        configs = []
-        for network_size in network_sizes():
-            for seed in seeds():
-                if not simulations[network_size, seed].has_finished():
-                    configs.append(f"{simulations[network_size, seed].current_run.work_dir}/ips.ftx.config")
-        ips_command = "ips.py --config=" + ",".join(configs) + f" --platform=$CFS/atom/users/pieterja/ips-examples/iterative-xolotlFT-UQ/conf.ips.cori --log=log.framework.{n} 2>>log.stdErr.{n} 1>>log.stdOut.{n}"
-        commands.append(ips_command)
-        batchscript = ftxpy.Batchscript(slurm_settings=slurm_settings, commands=commands)
-        with ftxpy.working_directory(get_root_dir()):
-            job_id = batchscript.submit()
-        for network_size in network_sizes():
-            for seed in seeds():
-                if not simulations[network_size, seed].has_finished():
-                    simulations[network_size, seed].current_run._job_id = job_id
-                    simulations[network_size, seed].save(overwrite=True)
-        
-# ===================================================================
-def status():
-    for network_size in network_sizes():
-        for seed in seeds():
-            simulation_file = os.path.join(get_work_dir(network_size, seed), "simulation.pk")
-            if os.path.isfile(simulation_file):
-                simulation = ftxpy.FTXSimulation.load(simulation_file)
-                simulation.print_status()
-            else:
-                print(f"Simulation file '{simulation_file}' not found!")
+    group = ftxpy.FTXGroup.load(os.path.join(get_root_dir(), "simulation_group.pk"))
+    group.step()
+    group.save(overwrite=True)
 
 # ===================================================================
-def remove():
-    for network_size in network_sizes():
-        for seed in seeds():
-            shutil.rmtree(get_work_dir(network_size, seed), ignore_errors=True)
+def print_status():
+    group = ftxpy.FTXGroup.load(os.path.join(get_root_dir(), "simulation_group.pk"))
+    group.print_status()
+
+# ===================================================================
+def postprocess():
+    group = ftxpy.FTXGroup.load(os.path.join(get_root_dir(), "simulation_group.pk"))
+    group.postprocess()
+
+# ===================================================================
+def delete_failed_restarts():
+    group = ftxpy.FTXGroup.load(os.path.join(get_root_dir(), "simulation_group.pk"))
+    group.save(overwrite=True)
 
 # ===================================================================
 def main():
