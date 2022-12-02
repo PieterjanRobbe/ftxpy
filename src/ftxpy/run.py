@@ -81,7 +81,7 @@ class FTXRun():
     def clean(self):
         """Clean this run directory"""
         with working_directory(self.work_dir):
-            clean_sh = "cleanIpsRun.sh"
+            clean_sh = "clean.sh"
             if not os.path.isfile(clean_sh):
                 print(f"File {clean_sh} does not exist")
                 raise ValueError("FTXPy -> FTXRun -> clean() : File does not exist")
@@ -125,6 +125,14 @@ class FTXRun():
                 return False
             return occursin_file("FT-X driver:finalize called", log_ftx_file)
 
+    def has_errored(self)->bool:
+        """Check if this FTX run has errored"""
+        with working_directory(self.work_dir):
+            log_warning_file = "log.warning"
+            if not os.path.isfile(log_warning_file):
+                return True
+            return occursin_file("ERROR", log_warning_file)
+
     def has_exceeded_the_time_limit(self)->bool:
         """Check if this FTX run has been killed because it exceeded the specified time limit"""
         with working_directory(self.work_dir):
@@ -135,4 +143,4 @@ class FTXRun():
 
     def has_failed(self)->bool:
         """Check if this FTX run has failed because of another error"""
-        return self.has_started() and not self.is_queueing() and not self.is_running() and not self.has_exceeded_the_time_limit() and not self.has_finished()
+        return self.has_started() and not self.has_finished() and not self.has_errored() and not self.has_exceeded_the_time_limit() and not self.is_queueing() and not self.is_running()

@@ -46,3 +46,15 @@ class Batchscript():
             print(f"Error submitting batchscript")
             raise ValueError("FTXPy -> Batchscript -> submit() : Error submitting batchscript")
         return job_id
+
+# class that represents a dummy batchscript
+class DummyBatchscript():
+
+    def __init__(self):
+        """
+        A class to represent a dummy batchscript
+        """
+        self.slurm_settings = dict()
+
+    def submit(self):
+        pass

@@ -78,11 +78,13 @@ class FTXInput():
             raise ValueError("FTXPy -> FTXInput -> write_files(dest) : Destination directory does not exist")
         with working_directory(dest):
             for dir_name in self._dirs:
-                shutil.copytree(dir_name, os.path.basename(dir_name))
+                shutil.copytree(dir_name, os.path.basename(dir_name), dirs_exist_ok=True)
             for file_name, file_contents in self._files.items():
                 lines = file_contents.copy()
-                for param_name, param_value in self.parameters.items():
-                    for line_nb, line in enumerate(lines):
-                        lines[line_nb] = line.replace("{" + param_name + "}", str(param_value.get_value()))
+                for _ in range(2): # repeat twice to capture self-references in parameters
+                    for param_name, param_value in self.parameters.items():
+                        for line_nb in range(len(lines)):
+                            if "{" + param_name + "}" in lines[line_nb]:
+                                lines[line_nb] = lines[line_nb].replace("{" + param_name + "}", str(param_value.get_value()))
                 with open(file_name, "w") as f:
                     f.writelines(lines)

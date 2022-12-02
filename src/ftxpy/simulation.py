@@ -178,6 +178,10 @@ class FTXSimulation():
         """Check if this FTX simulation has finished"""
         return self.current_run.has_finished()
 
+    def has_errored(self)->bool:
+        """Check if this FTX simulation has errored"""
+        return self.current_run.has_errored()
+
     def has_failed(self)->bool:
         """Check if this FTX simulation has failed because of another error"""
         return self.current_run.has_failed()
@@ -226,14 +230,16 @@ class FTXSimulation():
         """Returns the status of this FTX simulation"""
         if not self.has_started():
             status = "has not started"
+        elif self.has_finished():
+            status = "has finished"
+        elif self.has_exceeded_the_time_limit():
+            status = "has exceeded the time limit"
         elif self.is_queueing():
             status = "is queueing"
         elif self.is_running():
             status = "is running"
-        elif self.has_exceeded_the_time_limit():
-            status = "has exceeded the time limit"
-        elif self.has_finished():
-            status = "has finished"
+        elif self.has_errored():
+            status = "has errored"
         elif self.has_failed():
             status = "has failed"
         else:

@@ -3,6 +3,7 @@ from .parameter import *
 from .input import *
 from .run import *
 from .simulation import *
+from .group import *
 from .output import *
 
 # load default configuration files

@@ -50,7 +50,7 @@ def get_last_occurance(file_contents:list, search_str:str)->int:
 
 # function to parse a toml file into parameters, slurm settings and a list of commands
 def parse(config_file:str, case="PISCES", profile="debug"):
-    """Parse a configuration file for a given case, profile and machine"""
+    """Parse a configuration file for a given case and profile"""
 
     # parse toml file
     config = toml.load(config_file)
