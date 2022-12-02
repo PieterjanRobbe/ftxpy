@@ -4,16 +4,6 @@ import ftxpy
 import numpy as np
 import os
 import shutil
-import sys
-
-# ===================================================================
-class DummyBatchScript():
-
-    def __init__(self, slurm_settings):
-        self.slurm_settings = slurm_settings
-
-    def submit(self):
-        pass
 
 # ===================================================================
 # test two different seeds
@@ -41,7 +31,8 @@ for seed in [0, 1]:
 
     # define batchscript
     slurm_settings = config["batchscript"]["slurm_settings"]
-    batchscript = DummyBatchScript(slurm_settings)
+    commands = config["batchscript"]["commands"]
+    batchscript = ftxpy.Batchscript(slurm_settings=slurm_settings, commands=commands)
 
     # set up a work directory
     work_dir = os.path.join(root_dir, f"seed_{seed}")
@@ -53,20 +44,13 @@ for seed in [0, 1]:
 
     # set up an ftx simulation
     simulation = ftxpy.FTXSimulation(run)
-    simulation.start() # run as usual with dummy batchscript
     simulations.append(simulation)
 
-# actually run the jobs
-config = ftxpy.utils.parse(ftxpy._ftxpy_config_cori_, case="PISCES", profile="debug")
-slurm_settings = config["batchscript"]["slurm_settings"]
-slurm_settings["min_nodes"] = 4
-commands = config["batchscript"]["commands"][:-1]
-configs = [f"{simulation.current_run.work_dir}/ips.ftx.config" for simulation in simulations]
-ips_command = "ips.py --config=" + ",".join(configs) + " --platform=$CFS/atom/users/$USER/ips-examples/iterative-xolotlFT-UQ/conf.ips.cori --log=log.framework 2>>log.stdErr 1>>log.stdOut"
-commands.append(ips_command)
-batchscript = ftxpy.Batchscript(slurm_settings=slurm_settings, commands=commands)
-with ftxpy.working_directory(root_dir):
-    job_id = batchscript.submit()
-for simulation in simulations:
-    simulation.current_run._job_id = job_id
-    simulation.save()
+# create a simulation group
+group = ftxpy.FTXGroup(root_dir, simulations)
+
+# start the simulation group
+group.start()
+
+# save the simulation group
+group.save(overwrite=True)

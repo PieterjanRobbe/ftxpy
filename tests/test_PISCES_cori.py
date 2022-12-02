@@ -13,6 +13,7 @@ inputs = ftxpy.FTXInput(parameters=parameters, source=source)
 # define batchscript
 slurm_settings = config["batchscript"]["slurm_settings"]
 commands = config["batchscript"]["commands"]
+# batchscript = ftxpy.DummyBatchscript()
 batchscript = ftxpy.Batchscript(slurm_settings=slurm_settings, commands=commands)
 
 # set up a work directory
