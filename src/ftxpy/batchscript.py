@@ -46,6 +46,8 @@ class Batchscript():
             print(f"Error submitting batchscript")
             raise ValueError("FTXPy -> Batchscript -> submit() : Error submitting batchscript")
         return job_id
+        # for k, v in job.items():
+        #     print(k, v)
 
 # class that represents a dummy batchscript
 class DummyBatchscript():

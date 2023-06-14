@@ -47,7 +47,7 @@ value = 0.001
 
 [input.parameters.XOLOTL_NUM_TRIES]
 description = "Number of times to try to run Xolotl before giving up"
-value = 1
+value = 3
 
 #
 # PETSc parameters
@@ -55,7 +55,7 @@ value = 1
 
 [input.parameters.start_stop]
 description = "(?) A parameter in PETSc, should be ~'LOOP_TIME_STEP'/10"
-value = 0.05
+value = 0.005
 
 [input.parameters.ts_adapt_dt_max]
 description = "Initial value of time step in PETSc"
@@ -68,6 +68,10 @@ value = 1e-5
 [input.parameters.ts_rtol]
 description = "Relative tolerance in PETSc"
 value = 1e-5
+
+[input.parameters.ts_adapt_clip]
+description = "Sets the admissible decrease/increase factor in step size in the time step adapter"
+value = "'0.1,1.1'"
 
 #
 # Fidelity parameters
@@ -238,7 +242,7 @@ value = "{E0_He}"
 
 [input.parameters.inputEnergy_W]
 description = "Flag to determine if the input energies for W are read from a distribution file (< 0) of if the given values are used (>= 0)"
-value = -1.0
+value = 0.0
 
 [input.parameters.inputAngle_He]
 description = "Flag to determine if the input angles for He are read from a distribution file (< 0) of if the given values are used (>= 0)"
@@ -246,7 +250,7 @@ value = "{ALPHA0_He}"
 
 [input.parameters.inputAngle_W]
 description = "Flag to determine if the input angles for W are read from a distribution file (< 0) of if the given values are used (>= 0)"
-value = -1.0
+value = 0.0
 
 [input.parameters.tempParam]
 description = "Parameter in the constanst temperature model"
@@ -258,7 +262,7 @@ value = 5.4e22
 
 [input.parameters.fluxFraction_He]
 description = "Value of the flux fraction of He in gitrOut.txt"
-value = 1.0
+value = 1
 
 [input.parameters.fluxFraction_W]
 description = "Value of the flux fraction of W in gitrOut.txt"
@@ -266,7 +270,7 @@ value = 0.00293159784018
 
 [input.parameters.GITRoutput_dir]
 description = "Location of the GITR output directory"
-value = "{SIM_ROOT}/GITRoutput/PISCES"
+value = "GITRoutput/PISCES"
 
 #
 # Parallel processing parameters
@@ -279,9 +283,20 @@ value = 128
 description = "Number of processors per node for Xolotl, ideally NPROC/task_ppn = number of nodes"
 value = 64
 
+[input.parameters.FTMPI_NODES]
+description = "Number of nodes to use for F-Tridyn"
+value = 2
+
 [input.parameters.FTMPI_PPN]
-description = "Number of processors to use for F-Tridyn"
-value = 128
+description = "Number of processes per node to use for F-Tridyn"
+value = 64
+
+#
+# Machine
+#
+[input.parameters.MACHINE]
+description = "Name of this machine"
+value = "CORI"
 
 #
 # Case-dependent parameters
@@ -358,7 +373,7 @@ commands = [
 [profiles.debug.input.parameters]
 END_TIME = 2e-4
 LOOP_TIME_STEP = 1e-4
-start_stop = 1e-5
+nImpacts = 1000
 netParam="8 0 0 50 6 false"
 
 [profiles.debug.batchscript.slurm_settings]

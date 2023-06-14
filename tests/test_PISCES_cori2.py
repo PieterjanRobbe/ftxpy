@@ -3,7 +3,7 @@ import os
 import shutil
 
 # load configuration file
-config = ftxpy.utils.parse(ftxpy._ftxpy_config_perlmutter_, case="PISCES", profile="debug")
+config = ftxpy.utils.parse(ftxpy._ftxpy_config_cori_, case="PISCES", profile="debug")
 
 # define inputs
 parameters = config["input"]["parameters"]
@@ -16,7 +16,7 @@ commands = config["batchscript"]["commands"]
 batchscript = ftxpy.Batchscript(slurm_settings=slurm_settings, commands=commands)
 
 # set up a work directory
-work_dir = os.path.join(os.environ["PSCRATCH"], "ftxpy", "test_PISCES")
+work_dir = os.path.join(os.environ["CSCRATCH"], "ftxpy", "test_PISCES_cori2")
 shutil.rmtree(work_dir, ignore_errors=True)
 os.makedirs(work_dir)
 

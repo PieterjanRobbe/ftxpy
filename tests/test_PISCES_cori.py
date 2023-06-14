@@ -13,11 +13,10 @@ inputs = ftxpy.FTXInput(parameters=parameters, source=source)
 # define batchscript
 slurm_settings = config["batchscript"]["slurm_settings"]
 commands = config["batchscript"]["commands"]
-# batchscript = ftxpy.DummyBatchscript()
 batchscript = ftxpy.Batchscript(slurm_settings=slurm_settings, commands=commands)
 
 # set up a work directory
-work_dir = os.path.join(os.environ["CSCRATCH"], "ftxpy", "test_PISCES")
+work_dir = os.path.join(os.environ["CSCRATCH"], "ftxpy", "test_PISCES_a7l")
 shutil.rmtree(work_dir, ignore_errors=True)
 os.makedirs(work_dir)
 

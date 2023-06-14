@@ -1,0 +1,107 @@
+9a10,11
+> 	 redirect xolotlToLay output of to:
+> 	  /global/cscratch1/sd/pieterja/ftxpy/parameter_study/V1_1/init_V1_1/log.ftx
+31c33
+< 	 	 dTime = 0.05
+---
+> 	 	 dTime = 0.15000000000000002
+83c85
+< 	 maximum projectile range for He is 153.09865311365874 [A]
+---
+> 	 maximum projectile range for He is 153.09865310493777 [A]
+92c94
+< 	 	 {'ftridynOnePrjOutput': 'He_WDUMPPRJ.DAT', 'ftridynFolder': '/global/cscratch1/sd/pieterja/ftxpy/parameter_study/V1_1/init_V1_1/work/workers__ftridynWorker_515/FTRIDYN/ANGLE', 'angle': [0.0], 'weightAngle': [1.0], 'prjRange': 153.09865311365874, 'print_test': True, 'nBins': 256, 'logFile': '/global/cscratch1/sd/pieterja/ftxpy/parameter_study/V1_1/init_V1_1/log.ftx'}
+---
+> 	 	 {'ftridynOnePrjOutput': 'He_WDUMPPRJ.DAT', 'ftridynFolder': '/global/cscratch1/sd/pieterja/ftxpy/parameter_study/V1_1/init_V1_1/work/workers__ftridynWorker_515/FTRIDYN/ANGLE', 'angle': [0.0], 'weightAngle': [1.0], 'prjRange': 153.09865310493777, 'print_test': True, 'nBins': 256, 'logFile': '/global/cscratch1/sd/pieterja/ftxpy/parameter_study/V1_1/init_V1_1/log.ftx'}
+102c104
+< 	 from pkl file, set dict value to prjRange= 153.09865311365874
+---
+> 	 from pkl file, set dict value to prjRange= 153.09865310493777
+107c109
+< 	 	 the sum of weights is  1.0  and projectile range 153.09865311365874  [A]
+---
+> 	 	 the sum of weights is  1.0  and projectile range 153.09865310493777  [A]
+114,134d115
+<  
+< 	 In get_yields,  dictionary defined in pkl file: 
+< 	 /global/cscratch1/sd/pieterja/ftxpy/parameter_study/V1_1/init_V1_1/work/driver__xolotlFtridynDriver_514/ft_getYields.pkl
+<  
+< 	 TEST: dictionary in pkl file contains:
+< 	 	 {'ftridynOneOutOutput': 'He_WOUT.DAT', 'ftridynFolder': '/global/cscratch1/sd/pieterja/ftxpy/parameter_study/V1_1/init_V1_1/work/workers__ftridynWorker_515/FTRIDYN/ANGLE', 'angle': [0.0], 'weightAngle': [1.0], 'fNImpacts': 100000, 'logFile': '/global/cscratch1/sd/pieterja/ftxpy/parameter_study/V1_1/init_V1_1/log.ftx', 'print_test': True}
+< 	 from pkl file, set dict value to ftridynOneOutOutput= He_WOUT.DAT
+< 	 from pkl file, set dict value to ftridynFolder= /global/cscratch1/sd/pieterja/ftxpy/parameter_study/V1_1/init_V1_1/work/workers__ftridynWorker_515/FTRIDYN/ANGLE
+< 	 from pkl file, set dict value to angle= [0.0]
+< 	 from pkl file, set dict value to weightAngle= [1.0]
+< 	 from pkl file, set dict value to fNImpacts= 100000
+< 	 from pkl file, set dict value to logFile= /global/cscratch1/sd/pieterja/ftxpy/parameter_study/V1_1/init_V1_1/log.ftx
+<  
+< 	 getYields:
+< 	 	 single, fixed angle used
+< 	 	 the sum of weights is  1.0
+< 	 	 for angle  0.0 , weight =  1.0 : spY =  0.00407  ; weighted spY =  0.00407  ; rY =  0.53222  ; weighted rY =  0.53222
+<  
+< 	 	 average sputtering yield is  0.00407
+< 	 	 average reflection yield is  0.53222
+< 	 	 TEST: yieldOutput =  [0.00407, 0.53222]
+136,137c117,118
+< 	 	 {'yields': [0.00407, 0.53222]}
+< 	 reading the pickle file, get_yields returned [total SpY, total RY] =  [0.00407, 0.53222]
+---
+> 	 	 {'ftridynOneOutOutput': 'He_WOUT.DAT', 'ftridynFolder': '/global/cscratch1/sd/pieterja/ftxpy/parameter_study/V1_1/init_V1_1/work/workers__ftridynWorker_515/FTRIDYN/ANGLE', 'angle': [0.0], 'weightAngle': [1.0], 'fNImpacts': 100000, 'logFile': '/global/cscratch1/sd/pieterja/ftxpy/parameter_study/V1_1/init_V1_1/log.ftx', 'print_test': True}
+> 	 reading the pickle file, get_yields returned [total SpY, total RY] =  [0.0, 0.0]
+152c133
+< 	 	 dTime = 0.05
+---
+> 	 	 dTime = 0.15000000000000002
+204c185
+< 	 maximum projectile range for W is 3.3920154119007098 [A]
+---
+> 	 maximum projectile range for W is 3.3920154118969736 [A]
+213c194
+< 	 	 {'ftridynOnePrjOutput': 'W_W_DUMPPRJ.DAT', 'ftridynFolder': '/global/cscratch1/sd/pieterja/ftxpy/parameter_study/V1_1/init_V1_1/work/workers__ftridynWorker_515/FTRIDYN/ANGLE', 'angle': [0.0], 'weightAngle': [1.0], 'prjRange': 3.3920154119007098, 'print_test': True, 'nBins': 256, 'logFile': '/global/cscratch1/sd/pieterja/ftxpy/parameter_study/V1_1/init_V1_1/log.ftx'}
+---
+> 	 	 {'ftridynOnePrjOutput': 'W_W_DUMPPRJ.DAT', 'ftridynFolder': '/global/cscratch1/sd/pieterja/ftxpy/parameter_study/V1_1/init_V1_1/work/workers__ftridynWorker_515/FTRIDYN/ANGLE', 'angle': [0.0], 'weightAngle': [1.0], 'prjRange': 3.3920154118969736, 'print_test': True, 'nBins': 256, 'logFile': '/global/cscratch1/sd/pieterja/ftxpy/parameter_study/V1_1/init_V1_1/log.ftx'}
+223c204
+< 	 from pkl file, set dict value to prjRange= 3.3920154119007098
+---
+> 	 from pkl file, set dict value to prjRange= 3.3920154118969736
+228c209
+< 	 	 the sum of weights is  1.0  and projectile range 3.3920154119007098  [A]
+---
+> 	 	 the sum of weights is  1.0  and projectile range 3.3920154118969736  [A]
+267c248
+< 	He :  spY = 0.00407 and rY = 0.53222 
+---
+> 	He :  spY = 0.0 and rY = 0.0 
+270,271c251,252
+< 	 self.maxRangeXolotl =  [15.309865311365874, 0.33920154119007095]  and max of self.maxRangeXolotl = 15.309865311365874
+< 	 spYield =  [0.00407, 0.0]  and max(self.spYield) =  0.00407
+---
+> 	 self.maxRangeXolotl =  [15.309865310493777, 0.33920154118969736]  and max of self.maxRangeXolotl = 15.309865310493777
+> 	 spYield =  [0.0, 0.0]  and max(self.spYield) =  0.0
+278,279c259,260
+< 	 timeFolder = t0.05
+< 	 maxRangeXolotl = [15.309865311365874, 0.33920154119007095]
+---
+> 	 timeFolder = t0.15000000000000002
+> 	 maxRangeXolotl = [15.309865310493777, 0.33920154118969736]
+281,282c262,263
+< 	 rYield = [0.53222, 0.0]
+< 	 xp_parameters =  {'dimensions': 1, 'process': 'reaction advec modifiedTM diff movingSurface attenuation bursting', 'netParam': [8, 0, 0, 100, 6, 'false'], 'vizHandler': 'dummy', 'perfHandler': 'os', 'material': 'W100', 'flux': 54000.00000000001, 'petscArgs': {'-start_stop': 0.015000000000000003, '-ts_adapt_dt_max': 2e-05, '-fieldsplit_1_pc_type': 'redundant', '-fieldsplit_0_pc_type': 'sor', '-ts_max_steps': 1000000, '-pc_type': 'fieldsplit', '-pc_fieldsplit_detect_coupling': None, '-ts_exact_final_time': 'matchstep', '-ts_adapt_wnormtype': inf, '-ts_final_time': 0.05, '-ts_max_snes_failures': -1, '-ts_monitor': None, '-ts_dt': 1e-10, '-ts_atol': 1e-05, '-ts_rtol': 1e-05, '-snes_force_iteration': None, '-helium_retention': None, '-check_collapse': 1e-15, '-ts_adapt_clip': '0.1,1.1'}, 'sputtering': 0.00407, 'initialV': 1e-18, 'boundary': [1, 1], 'grouping': [31, 4, 4], 'burstingDepth': 10, 'voidPortion': 0.0, 'lattice': 0.317, 'impurityRadius': 0.3, 'biasFactor': 1.15, 'migration': [0.13, 0.2, 0.25, 0.2, 0.12, 0.3, 0.4, 1.1444444444444446], 'tempHandler': 'constant', 'tempParam': 1093.0, 'gridType': 'nonuniform', 'gridParam': [256, 0.5], 'fluxDepthProfileFilePath': 'tridyn.dat', 'burstingFactor': 200000000.0}
+---
+> 	 rYield = [0.0, 0.0]
+> 	 xp_parameters =  {'dimensions': 1, 'process': 'reaction advec modifiedTM diff movingSurface attenuation bursting', 'netParam': [8, 0, 0, 100, 6, 'false'], 'vizHandler': 'dummy', 'perfHandler': 'os', 'material': 'W100', 'flux': 54000.00000000001, 'petscArgs': {'-start_stop': 0.035, '-ts_adapt_dt_max': 4e-05, '-fieldsplit_1_pc_type': 'redundant', '-fieldsplit_0_pc_type': 'sor', '-ts_max_steps': 1000000, '-pc_type': 'fieldsplit', '-pc_fieldsplit_detect_coupling': None, '-ts_exact_final_time': 'matchstep', '-ts_adapt_wnormtype': inf, '-ts_final_time': 0.15, '-ts_max_snes_failures': -1, '-ts_monitor': None, '-ts_dt': 1e-10, '-ts_atol': 1e-05, '-ts_rtol': 1e-05, '-snes_force_iteration': None, '-helium_retention': None, '-check_collapse': 1e-15, '-ts_adapt_clip': '0.1,1.1'}, 'sputtering': 0.00407, 'initialV': 1e-18, 'boundary': [1, 1], 'grouping': [31, 4, 4], 'burstingDepth': 10, 'voidPortion': 0.0, 'lattice': 0.317, 'impurityRadius': 0.3, 'biasFactor': 1.15, 'migration': [0.13, 0.2, 0.25, 0.2, 0.12, 0.3, 0.4, 1.1444444444444446], 'tempHandler': 'constant', 'tempParam': 1093.0, 'gridType': 'nonuniform', 'gridParam': [256, 0.5], 'fluxDepthProfileFilePath': 'tridyn.dat', 'burstingFactor': 200000000.0, 'networkFile': 'networkFile.h5'}
+284,285c265,266
+< 	 	 fraction in plasma = 1 , and reflection = 0.53222 
+< 	 	 effective fraction (in plasma * (1-reflection)) = 0.46778 
+---
+> 	 	 fraction in plasma = 1 , and reflection = 0.0 
+> 	 	 effective fraction (in plasma * (1-reflection)) = 1.0 
+297c278
+< 	 to keep  tridyn.dat  for every loop, save as  tridyn.dat_t0.05
+---
+> 	 to keep  tridyn.dat  for every loop, save as  tridyn.dat_t0.15000000000000002
+299c280
+< zip F-TRIDYNs output: t0.05 
+---
+> zip F-TRIDYNs output: t0.15000000000000002 

@@ -53,7 +53,13 @@ class FTXGroup():
             configs = []
             for simulation in simulations:
                 configs.append(f"{simulation.current_run.work_dir}/ips.ftx.config")
-            ips_command = "ips.py --config=" + ",".join(configs) + f" --platform=$CFS/atom/users/$USER/ips-examples/iterative-xolotlFT-UQ/conf.ips.cori --log=log.framework.{self.run_number} 2>>log.stdErr.{self.run_number} 1>>log.stdOut.{self.run_number}"
+            for command in self.batchscript.commands:
+                if "conf.ips" in command:
+                    words = command.split()
+                    for word in words:
+                        if "conf.ips" in word:
+                            machine = word.split(".")[-1]
+            ips_command = "ips.py --config=" + ",".join(configs) + f" --platform=$CFS/atom/users/$USER/ips-examples/iterative-xolotlFT-UQ/conf.ips.{machine} --log=log.framework.{self.run_number} 2>>log.stdErr.{self.run_number} 1>>log.stdOut.{self.run_number}"
             self.batchscript.commands[-1] = ips_command
             with working_directory(self.work_dir):
                 job_id = self.batchscript.submit()
@@ -76,7 +82,10 @@ class FTXGroup():
         """Execute the next step in this group of simulations"""
         simulations = list()
         for simulation in self.simulations:
-            if not simulation.has_finished():
+            if not simulation.has_started():
+                simulation.start()
+                simulations.append(simulation)
+            elif not simulation.has_finished():
                 simulation.restart()
                 simulations.append(simulation)
 
@@ -105,6 +114,8 @@ class FTXGroup():
             output.load_surface()
             output.load_retention()
             output.load_content()
+            output.load_sputtering_yields()
+            output.load_last_TRIDYN()
             output.save(overwrite=True)
 
     def load(file_name:str):
