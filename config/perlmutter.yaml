@@ -257,12 +257,11 @@ batchscript:
     - flag: time
       description: Maximum wall clock time of this job in minutes
       value: 720
+    - flag: image
+      description: Image to mount in this job
+      value: docker:pieterjanr/ftx:latest
   commands:
     - source activate ftx
-    - module load PrgEnv-cray cray-python
-    - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/gcc/11.2.0/snos/lib64
-    - export OMP_PLACES=threads
-    - export OMP_PROC_BIND=spread
     - ips.py --config={config_files} --platform={platform_file} --log={log_file} 1>>{stdout_file} 2>>{stderr_file}
 profiles:
   debug:
