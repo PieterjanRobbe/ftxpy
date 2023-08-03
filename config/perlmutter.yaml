@@ -1,0 +1,289 @@
+# Default FTXPy configuration file
+input:
+  parameters:
+    - name: INIT_TIME
+      description: The start time of the simulation
+      value: 0.0
+    - name: END_TIME
+      description: The end time of the simulation
+      value: 10
+    - name: LOOP_TIME_STEP
+      description: The initial length of a loop
+      value: 0.05
+    - name: LOOP_TS_FACTOR
+      description: The multiplication factor for the loop length
+      value: 2
+    - name: LOOP_TS_NLOOPS
+      description: Multiply 'LOOP_TIME_STEP' by 'LOOP_TS_FACTOR' every 'LOOP_TS_NLOOPS' loops
+      value: 1
+    - name: START_MODE
+      description: Start mode of the simulation ('INIT' or 'RESTART')
+      value: INIT
+    - name: LOOP_N
+      description: FTX loop number
+      value: 0
+    - name: XOLOTL_MAX_TS
+      description: A limit on how much to increase Xolotl's max time step
+      value: 0.001
+    - name: XOLOTL_NUM_TRIES
+      description: Number of times to try to run Xolotl before giving up
+      value: 3
+    - name: time_decimal
+      description: Round each time to the given time decimal
+      value: 14
+    - name: start_stop
+      description: (?) A parameter in PETSc, should be ~'LOOP_TIME_STEP'/10
+      value: 0.005
+    - name: ts_adapt_dt_max
+      description: Initial value of time step in PETSc
+      value: 1.0e-05
+    - name: ts_atol
+      description: Absolute tolerance in PETSc
+      value: 1.0e-05
+    - name: ts_rtol
+      description: Relative tolerance in PETSc
+      value: 1.0e-05
+    - name: ts_adapt_clip
+      description: Sets the admissible decrease/increase factor in step size in the time step adapter
+      value: "'0.1,1.1'"
+    - name: gridParam
+      description: The size of the computational domain
+      value: 256
+    - name: netParam
+      description: Parameters related to the network size (nHe nD nT maxVSize nInterstitials phaseCut)
+      value: '8 0 0 250 6 false'
+    - name: grouping
+      description: Parameters related to the grouping (grouping = groupHeV groupHe groupV; grouping ON if groupHeV < MaxVSize)
+      value: '31 4 4'
+    - name: nImpacts
+      description: The number of particles to use
+      value: 100000
+    - name: SBV_W
+      description: Surface binding energy of W [eV]
+      value: 8.78
+      lower: 8.68
+      upper: 12
+    - name: EF_W
+      description: Cutoff energy of W [eV]
+      value: 3
+      lower: 2.7
+      upper: 3.3
+    - name: EF_He
+      description: Cutoff energy of He [eV]
+      value: 0.1
+      lower: 0.09
+      upper: 1.1
+    - name: E0_He
+      description: Beam energy [eV]
+      value: &E0_He 250
+      lower: 240
+      upper: 300
+    - name: ALPHA0_He
+      description: Incident angle [degrees]
+      value: &ALPHA0_He 0
+      lower: 0
+      upper: 30
+    - name: lattice
+      description: The length of the lattice side [nm]
+      value: 0.317
+      lower: 0.316
+      upper: 0.318
+    - name: impurityRadius
+      description: The radius of the main impurity [nm]
+      value: 0.3
+      lower: 0.27
+      upper: 0.33
+    - name: biasFactor
+      description: Interstitial bias factor (interstitial clusters have a larger strain field) [-]
+      value: 1.15
+      lower: 1.035
+      upper: 1.265
+    - name: initialV
+      description: The initial concentration of vacancies in the material [#/nm3]
+      value: 1.0e-18
+      lower: 1.0e-19
+      upper: 1.0e-17
+      log10_transform: true
+    - name: voidPortion
+      description: The fraction of the computational domain that is void
+      value: 0.0
+    - name: burstingFactor
+      description: Multiplication constant for the bursting rate [-]
+      value: 2.0e+8
+      lower: 1.0e+2
+      upper: 1.0e+9
+      log10_transform: true
+    - name: burstingDepth
+      description: The depth after which there is an exponential decrease in the probability of bursting [nm]
+      value: 10
+      lower: 1
+      upper: 20
+    - name: He1
+      description: Migration energy threshold (above which the diffusion will be ignored) for He1 clusters [eV]
+      value: 0.13
+      lower: 0.11
+      upper: 0.25
+    - name: He2
+      description: Migration energy threshold (above which the diffusion will be ignored) for He2 clusters [eV]
+      value: 0.2
+      lower: 0.2
+      upper: 0.3
+    - name: He3
+      description: Migration energy threshold (above which the diffusion will be ignored) for He3 clusters [eV]
+      value: 0.25
+      lower: 0.25
+      upper: 0.4
+    - name: He4
+      description: Migration energy threshold (above which the diffusion will be ignored) for He4 clusters [eV]
+      value: 0.2
+      lower: 0.15
+      upper: 0.5
+    - name: He5
+      description: Migration energy threshold (above which the diffusion will be ignored) for He5 clusters [eV]
+      value: 0.12
+      lower: 0.1
+      upper: 0.2
+    - name: He6
+      description: Migration energy threshold (above which the diffusion will be ignored) for He6 clusters [eV]
+      value: 0.3
+      lower: 0.3
+      upper: 0.45
+    - name: He7
+      description: Migration energy threshold (above which the diffusion will be ignored) for He7 clusters [eV]
+      value: 0.4
+      lower: 0.3
+      upper: 0.45
+    - name: V1
+      description: Migration energy threshold (above which the diffusion will be ignored) for V1 clusters [eV]
+      value: 1.3
+      lower: 1.1
+      upper: 1.5
+    - name: SIM_NAME
+      description: The name of this simulation
+      value: FTX UQ simulation
+    - name: SIM_ROOT
+      description: The root directory for this simulation
+      value: $PWD
+    - name: inputEnergy_He
+      description: Flag to determine if the input energies for He are read from a distribution file (< 0) of if the given values are used (>= 0)
+      value: *E0_He
+    - name: inputEnergy_W
+      description: Flag to determine if the input energies for W are read from a distribution file (< 0) of if the given values are used (>= 0)
+      value: 0.0
+    - name: inputAngle_He
+      description: Flag to determine if the input angles for He are read from a distribution file (< 0) of if the given values are used (>= 0)
+      value: *ALPHA0_He
+    - name: inputAngle_W
+      description: Flag to determine if the input angles for W are read from a distribution file (< 0) of if the given values are used (>= 0)
+      value: 0.0
+    - name: tempParam
+      description: Parameter in the constanst temperature model
+      value: 1093.0
+    - name: flux
+      description: Value of the flux in gitrOut.txt
+      value: 5.4e+22
+    - name: fluxFraction_He
+      description: Value of the flux fraction of He in gitrOut.txt
+      value: 1
+    - name: fluxFraction_W
+      description: Value of the flux fraction of W in gitrOut.txt
+      value: 0.00293159784018
+    - name: GITRoutput_dir
+      description: Location of the GITR output directory
+      value: GITRoutput/PISCES
+    - name: NPROC
+      description: Number of processors to use for Xolotl
+      value: 128
+    - name: task_ppn
+      description: Number of processors per node for Xolotl, ideally NPROC/task_ppn = number of nodes
+      value: 128
+    - name: FTMPI_NODES
+      description: Number of nodes to use for F-Tridyn
+      value: 1
+    - name: FTMPI_PPN
+      description: Number of processes per node to use for F-Tridyn
+      value: 128
+    - name: MACHINE
+      description: Name of this machine
+      value: PERLMUTTER
+  source: ${CFS}/atom/users/${USER}/ips-examples/iterative-xolotlFT-UQ
+cases:
+  PISCES:
+    input:
+      parameters:
+  ITER-He:
+    input:
+      parameters:
+        - name: gridParam
+          value: 367
+        - name: inputEnergy_He
+          value: -1.0
+        - name: inputEnergy_W
+          value: -1.0
+        - name: inputAngle_He
+          value: -1.0
+        - name: inputAngle_W
+          value: -1.0
+        - name: tempParam
+          value: 343.0
+        - name: flux
+          value: 3.49285e+20
+        - name: fluxFraction_He
+          value: 0.9978853
+        - name: fluxFraction_W
+          value: 0.002114695
+        - name: GITRoutput_dir
+          value: GITRoutput/ITER-He/gitr16
+batchscript:
+  slurm_settings:
+    - flag: job-name
+      description: Name of this job
+      value: ftx_job
+    - flag: account
+      description: Account where to charge this job to
+      value: m1709
+    - flag: output
+      description: Name of the log file for slurm output
+      value: log.slurm.stdOut
+    - flag: qos
+      description: Quality of service
+      value: regular
+    - flag: constraint
+      description: Specify partition where to run this job
+      value: cpu
+    - flag: nodes
+      description: Number of nodes to use for this job
+      value: 1
+    - flag: time
+      description: Maximum wall clock time of this job in minutes
+      value: 720
+  commands:
+    - source activate ftx
+    - module load PrgEnv-cray cray-python
+    - export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/gcc/11.2.0/snos/lib64
+    - export OMP_PLACES=threads
+    - export OMP_PROC_BIND=spread
+    - ips.py --config={config_files} --platform={platform_file} --log={log_file} 1>>{stdout_file} 2>>{stderr_file}
+profiles:
+  debug:
+    input:
+      parameters:
+        - name: END_TIME
+          value: 2.0e-4
+        - name: LOOP_TIME_STEP
+          value: 1.0e-4
+        - name: nImpacts
+          value: 1000
+        - name: netParam
+          value: '8 0 0 50 6 false'
+    batchscript:
+      slurm_settings:
+        - flag: qos
+          value: debug
+        - flag: time
+          value: 30
+  production:
+    input:
+      parameters:
+    batchscript:
+      slurm_settings:

@@ -1,5 +1,4 @@
 import os
-import pyslurm
 import shlex
 import subprocess
 
@@ -101,17 +100,20 @@ class FTXRun():
     def start(self)->None:
         """Start this FTX run"""
         with working_directory(self.work_dir):
+            self.batchscript.update_commands(config_files="ips.ftx.config", log_file="log.framework", platform_file="conf.ips", stdout_file="log.stdOut", stderr_file="log.stdErr")
             self._job_id = self.batchscript.submit()
 
     def is_running(self)->bool:
         """Check if this FTX run is currently running"""
-        jobs = pyslurm.job().get()
-        return self._job_id in jobs and jobs[self._job_id]["run_time"] > 0
+        cmd = f"squeue --job {self._job_id}"
+        result = subprocess.run(cmd, stdout=subprocess.PIPE)
+        return result.stdout.decode().split()[-4] == "R"
 
     def is_queueing(self)->bool:
         """Check if this FTX run is currently queueing"""
-        jobs = pyslurm.job().get()
-        return self._job_id in jobs and jobs[self._job_id]["run_time"] == 0
+        cmd = f"squeue --job {self._job_id}"
+        result = subprocess.run(cmd, stdout=subprocess.PIPE)
+        return result.stdout.decode().split()[-4] == "PD"
 
     def has_started(self)->bool:
         """Check if this FTX run has started"""

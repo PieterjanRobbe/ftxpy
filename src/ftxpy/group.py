@@ -41,6 +41,9 @@ class FTXGroup():
             raise ValueError("FTXPy -> FTXGroup -> __init__() : A simulation group needs at least one simulation")
         self.simulations = simulations
         self.batchscript = simulations[0].current_run.batchscript
+        for setting in simulations[0].current_run.batchscript.slurm_settings:
+            if setting["flag"] == "nodes":
+                self.nodes_per_simulation = setting["value"]
         for simulation in simulations:
             simulation.current_run.batchscript = DummyBatchscript()
         self.run_number = -1
@@ -48,24 +51,16 @@ class FTXGroup():
     def _step(self, simulations):
         if len(simulations) > 0:
             self.run_number += 1
-            self.batchscript.slurm_settings["output"] = f"log.slurm.stdOut.{self.run_number}"
-            self.batchscript.slurm_settings["min_nodes"] = 2*len(simulations)
-            configs = []
-            for simulation in simulations:
-                configs.append(f"{simulation.current_run.work_dir}/ips.ftx.config")
-            for command in self.batchscript.commands:
-                if "conf.ips" in command:
-                    words = command.split()
-                    for word in words:
-                        if "conf.ips" in word:
-                            machine = word.split(".")[-1]
-            ips_command = "ips.py --config=" + ",".join(configs) + f" --platform=$CFS/atom/users/$USER/ips-examples/iterative-xolotlFT-UQ/conf.ips.{machine} --log=log.framework.{self.run_number} 2>>log.stdErr.{self.run_number} 1>>log.stdOut.{self.run_number}"
-            self.batchscript.commands[-1] = ips_command
+            self.batchscript.reset()
+            self.batchscript.update_slurm_setting("output", f"log.slurm.stdOut.{self.run_number}")
+            self.batchscript.update_slurm_setting("nodes", len(simulations)*self.nodes_per_simulation)
+            configs = [f"{simulation.current_run.work_dir}/ips.ftx.config" for simulation in simulations]
+            self.batchscript.update_commands(config_files = ",".join(configs), log_file = f"log.framework.{self.run_number}", platform_file=f"{simulations[0].current_run.work_dir}/conf.ips", stdout_file = f"log.stdOut.{self.run_number}", stderr_file = f"log.stdErr.{self.run_number}")
             with working_directory(self.work_dir):
                 job_id = self.batchscript.submit()
             for simulation in simulations:
                 simulation.current_run._job_id = job_id
-                simulation.current_run.batchscript.slurm_settings["output"] = os.path.join(self.work_dir, self.batchscript.slurm_settings["output"])
+                simulation.current_run.batchscript.update_slurm_setting("output", f"log.slurm.stdOut.{self.run_number}")
 
     def start(self):
         """Start this group of simulations"""

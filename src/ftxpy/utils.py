@@ -1,7 +1,7 @@
 # import statements
 import os
 import pickle as pk
-import toml
+import yaml
 
 # special imports
 from .parameter import FTXParameter
@@ -48,32 +48,47 @@ def get_last_occurance(file_contents:list, search_str:str)->int:
         return -1
     return max(lines)
 
-# function to parse a toml file into parameters, slurm settings and a list of commands
+# function to parse a yaml file into parameters, slurm settings and a list of commands
 def parse(config_file:str, case="PISCES", profile="debug"):
     """Parse a configuration file for a given case and profile"""
 
-    # parse toml file
-    config = toml.load(config_file)
+    # parse yaml file
+    with open(config_file, 'r') as file:
+        config = yaml.safe_load(file)
 
-    # input checking
-    # TODO
+    # replace None by empty list
+    config = replace_none(config)
 
-    # update case-specific parameters
-    for k, v in config["input"]["cases"][case]["parameters"].items():
-        config["input"]["parameters"][k]["value"] = v
+    # update case- and profile-specific parameters
+    new_params = config["cases"][case]["input"]["parameters"]
+    new_params += config["profiles"][profile]["input"]["parameters"]
+    for new_param in new_params:
+        for param_nb, param in enumerate(config["input"]["parameters"]):
+            if param["name"] == new_param["name"]:
+                config["input"]["parameters"][param_nb]["value"] = new_param["value"]
+                break
     
-    # update profile-specific parameters
-    for k, v in config["profiles"][profile]["input"]["parameters"].items():
-        config["input"]["parameters"][k]["value"] = v
-
     # update profile-specific SLURM settings
-    for k, v in config["profiles"][profile]["batchscript"]["slurm_settings"].items():
-        config["batchscript"]["slurm_settings"][k] = v
+    new_settings = config["profiles"][profile]["batchscript"]["slurm_settings"]
+    for new_setting in new_settings:
+        for setting_nb, setting in enumerate(config["batchscript"]["slurm_settings"]):
+            if setting["flag"] == new_setting["flag"]:
+                config["batchscript"]["slurm_settings"][setting_nb]["value"] = new_setting["value"]
+                break
 
-    # parse parameters
+    # get parameters into dict format
     parameters = dict()
-    for k, v in config["input"]["parameters"].items():
-        parameters[k] = FTXParameter(name=k, **v)
+    for param in config["input"]["parameters"]:
+        parameters[param["name"]] = FTXParameter(**param)
     config["input"]["parameters"] = parameters
 
+    return config
+
+def replace_none(config):
+    if config is None:
+        return []
+    iterator = config.items() if type(config) == dict else enumerate(config) if type(config) == list else None
+    if iterator:
+        for k, v in iterator:
+            config[k] = replace_none(v)
     return config

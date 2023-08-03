@@ -80,12 +80,16 @@ class FTXParameter():
 
     def set_random_value(self)->None:
         """Sets the value of this parameter to a random value sampled according to a uniform law between the lower and upper bound"""
+        self.set_value_from_0_1(np.random.rand())
+
+    def set_value_from_0_1(self, x) -> None:
+        """Sets the value of this parameter based on a value from 0 (lower bound) to 1 (upper bound)"""
         a = self.lower
         b = self.upper
         if self.log10_transform:
             a = np.log10(a)
             b = np.log10(b)
-        value = np.random.rand() * (b - a) + a
+        value = x * (b - a) + a
         if self.log10_transform:
             value = 10**value
         self.value = value
