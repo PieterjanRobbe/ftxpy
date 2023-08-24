@@ -259,10 +259,12 @@ batchscript:
       value: 720
     - flag: image
       description: Image to mount in this job
-      value: docker:pieterjanr/ftx:latest
+      value: docker:pieterjanr/ips-ftx:latest
   commands:
-    - source activate ftx
-    - ips.py --config={config_files} --platform={platform_file} --log={log_file} 1>>{stdout_file} 2>>{stderr_file}
+    #- source activate ftx
+    #- module load PrgEnv-cray cray-python
+    #- export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/gcc/11.2.0/snos/lib64
+    - shifter ips.py --config={config_files} --platform={platform_file} --log={log_file} 1>>{stdout_file} 2>>{stderr_file}
 profiles:
   debug:
     input:
